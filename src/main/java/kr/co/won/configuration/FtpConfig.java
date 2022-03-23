@@ -1,13 +1,12 @@
 package kr.co.won.configuration;
 
+import kr.co.won.handler.FtpLetCustom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
-import org.apache.ftpserver.ftplet.FtpException;
-import org.apache.ftpserver.ftplet.User;
-import org.apache.ftpserver.ftplet.UserManager;
+import org.apache.ftpserver.ftplet.*;
 import org.apache.ftpserver.listener.Listener;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.DbUserManagerFactory;
@@ -15,6 +14,7 @@ import org.apache.ftpserver.usermanager.Md5PasswordEncryptor;
 import org.apache.ftpserver.usermanager.PasswordEncryptor;
 import org.apache.ftpserver.usermanager.UserManagerFactory;
 import org.apache.ftpserver.usermanager.impl.BaseUser;
+import org.apache.ftpserver.usermanager.impl.WritePermission;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,6 +22,11 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.sql.DataSource;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Configuration
@@ -29,6 +34,7 @@ import javax.sql.DataSource;
 public class FtpConfig {
 
     private final DataSource dataSource;
+    private final String ROOT_PATH ="/Users/duckheewon/Desktop/temp";
 
     @Bean
     public ListenerFactory listenerFactory() {
@@ -134,12 +140,26 @@ public class FtpConfig {
         UserManager userManager = userManager();
         ftpServerFactory.setUserManager(userManager);
 
+        // make file event map
+        Map<String, Ftplet> ftpSupportList = new HashMap<>();
+        ftpSupportList.put("default", new FtpLetCustom(userManager));
+        //setting file event handler
+        ftpServerFactory.setFtplets(ftpSupportList);
+
+        //TODO  sample user create
+        // user role make
+        List<Authority> authorities = new ArrayList<>();
+        authorities.add(new WritePermission());
+        // make user dir
+        File homeDir = new File(ROOT_PATH + "/admin");
+        // User make
         BaseUser adminUser = new BaseUser();
         adminUser.setName("admin");
         adminUser.setPassword("admin");
-        adminUser.setHomeDirectory("/test");
+        adminUser.setHomeDirectory(ROOT_PATH);
+//        adminUser.setHomeDirectory(homeDir.getName());
         adminUser.setEnabled(true);
-
+        adminUser.setAuthorities(authorities);
         userManager.save(adminUser);
 
         return ftpServerFactory;
