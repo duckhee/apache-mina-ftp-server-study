@@ -1,5 +1,7 @@
 package kr.co.won.handler;
 
+import kr.co.won.file.persistence.FtpFilePersistence;
+import kr.co.won.user.persistence.UserPersistence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ftpserver.ftplet.*;
@@ -11,6 +13,9 @@ import java.io.IOException;
 public class FtpLetCustom extends DefaultFtplet {
 
     private final UserManager userManager;
+    private final UserPersistence userPersistence;
+    private final FtpFilePersistence ftpFilePersistence;
+
 
     @Override
     public FtpletResult onLogin(FtpSession session, FtpRequest request) throws FtpException, IOException {
@@ -40,14 +45,18 @@ public class FtpLetCustom extends DefaultFtplet {
         if (!userManager.doesExist(findUserName)) {
             return FtpletResult.DISCONNECT;
         }
-        return super.onUploadStart(session, request);
+        FtpletResult superFtpletResult = super.onUploadStart(session, request);
+        log.info("upload start super result ::: {}", superFtpletResult);
+        return superFtpletResult;
     }
 
     @Override
     public FtpletResult onUploadEnd(FtpSession session, FtpRequest request) throws FtpException, IOException {
         log.info("get upload end session ::: {}", session);
         log.info("get upload end request ::: {}", request);
-        return super.onUploadEnd(session, request);
+        FtpletResult superFtpletResult = super.onUploadEnd(session, request);
+        log.info("upload end super result ::: {}", superFtpletResult);
+        return superFtpletResult;
     }
 
     @Override

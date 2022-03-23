@@ -1,5 +1,6 @@
 package kr.co.won.configuration;
 
+import kr.co.won.file.persistence.FtpFilePersistence;
 import kr.co.won.handler.FtpLetCustom;
 import kr.co.won.user.persistence.UserPersistence;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +36,9 @@ import java.util.Map;
 public class FtpConfig {
 
     private final DataSource dataSource;
-    private final String ROOT_PATH ="/Users/duckheewon/Desktop/temp";
+    private final String ROOT_PATH = "/Users/duckheewon/Desktop/temp";
     private final UserPersistence userPersistence;
+    private final FtpFilePersistence ftpFilePersistence;
 
     @Bean
     public ListenerFactory listenerFactory() {
@@ -59,6 +61,7 @@ public class FtpConfig {
 
         PasswordEncryptor passwordEncryptor = new PasswordEncryptor() {
             Md5PasswordEncryptor md5PasswordEncryptor = new Md5PasswordEncryptor();
+
             @Override
             public String encrypt(String s) {
                 log.info("password encoding ::: {}", s);
@@ -144,7 +147,7 @@ public class FtpConfig {
 
         // make file event map
         Map<String, Ftplet> ftpSupportList = new HashMap<>();
-        ftpSupportList.put("default", new FtpLetCustom(userManager));
+        ftpSupportList.put("default", new FtpLetCustom(userManager, userPersistence, ftpFilePersistence));
         //setting file event handler
         ftpServerFactory.setFtplets(ftpSupportList);
 
@@ -170,8 +173,20 @@ public class FtpConfig {
     @Bean
     public FtpServer ftpServer() throws FtpException {
         FtpServer server = ftpServerFactory().createServer();
+        log.info("get ftp server status ::: {}", server.isStopped());
+        log.info("get ftp server status ::: {}", server.isSuspended());
+        // ftp server start set
+        if (!server.isStopped()) {
+            server.stop();
+        }
+        // ftp server not have handler setting resume handler setting
+        if (!server.isSuspended()) {
+            server.resume();
+        }
         server.start();
         log.info("get ftp server status ::: {}", server.isStopped());
+        log.info("get ftp server status ::: {}", server.isSuspended());
+
         return server;
     }
 }
