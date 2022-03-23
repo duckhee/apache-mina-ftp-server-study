@@ -1,6 +1,7 @@
 package kr.co.won.configuration;
 
 import kr.co.won.handler.FtpLetCustom;
+import kr.co.won.user.persistence.UserPersistence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +36,7 @@ public class FtpConfig {
 
     private final DataSource dataSource;
     private final String ROOT_PATH ="/Users/duckheewon/Desktop/temp";
+    private final UserPersistence userPersistence;
 
     @Bean
     public ListenerFactory listenerFactory() {
