@@ -11,4 +11,7 @@ public interface UserPersistence extends JpaRepository<UserDomain, Long> {
      * ftp id find user
      */
     Optional<UserDomain> findByFtpId(String ftpId);
+
+    /** ftp id user exists */
+    public boolean existsByFtpId(String ftpId);
 }

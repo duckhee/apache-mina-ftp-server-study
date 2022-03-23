@@ -11,6 +11,7 @@ import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.listener.Listener;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.DbUserManagerFactory;
+import org.apache.ftpserver.usermanager.Md5PasswordEncryptor;
 import org.apache.ftpserver.usermanager.PasswordEncryptor;
 import org.apache.ftpserver.usermanager.UserManagerFactory;
 import org.apache.ftpserver.usermanager.impl.BaseUser;
@@ -47,24 +48,27 @@ public class FtpConfig {
     // password encoding use spring security
     @Bean
     public PasswordEncryptor passwordEncryptor() {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        PasswordEncryptor passwordEncryptor = new PasswordEncryptor() {
 
+        PasswordEncryptor passwordEncryptor = new PasswordEncryptor() {
+            Md5PasswordEncryptor md5PasswordEncryptor = new Md5PasswordEncryptor();
             @Override
             public String encrypt(String s) {
                 log.info("password encoding ::: {}", s);
+                String encodePw = md5PasswordEncryptor.encrypt(s);
+                log.info("password encoding ::: {}", encodePw);
 
-                return bCryptPasswordEncoder.encode(s);
+                return encodePw;
             }
 
             @Override
-            public boolean matches(String s, String s1) {
-                log.info("get password ::: {}, get raw password ::: {}", s1, s);
-                Boolean matches = bCryptPasswordEncoder.matches(s1, s);
+            public boolean matches(String passwordToCheck, String storedPassword) {
+                log.info("get store password ::: {}, get check password ::: {}", storedPassword, passwordToCheck);
+                Boolean matches = md5PasswordEncryptor.matches(passwordToCheck, storedPassword);
                 log.info("password matching ::: {}", matches);
-                return true;
+                return matches;
             }
         };
+
         return passwordEncryptor;
     }
 
