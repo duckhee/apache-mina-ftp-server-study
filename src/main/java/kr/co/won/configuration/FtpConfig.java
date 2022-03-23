@@ -19,7 +19,6 @@ import org.apache.ftpserver.usermanager.impl.BaseUser;
 import org.apache.ftpserver.usermanager.impl.WritePermission;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -37,7 +36,7 @@ public class FtpConfig {
 
 
     private final DataSource dataSource;
-    private final AppProperties appProperties;
+    private final FtpProperties appProperties;
     private final String ROOT_PATH = "/Users/duckheewon/Desktop/temp";
     private final UserPersistence userPersistence;
     private final FtpFilePersistence ftpFilePersistence;
@@ -166,7 +165,7 @@ public class FtpConfig {
             log.info("create home dir ::: {}, exists ::: {}", homeDir, homeDir.exists());
         }
 
-        // User make
+        // User admin User make
         BaseUser adminUser = new BaseUser();
         adminUser.setName("admin");
         adminUser.setPassword("admin");
