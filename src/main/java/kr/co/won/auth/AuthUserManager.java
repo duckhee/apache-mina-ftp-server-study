@@ -1,13 +1,18 @@
 package kr.co.won.auth;
 
+import com.querydsl.core.util.StringUtils;
 import kr.co.won.user.domain.UserDomain;
 import kr.co.won.user.persistence.UserPersistence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ftpserver.ftplet.*;
+import org.apache.ftpserver.usermanager.AnonymousAuthentication;
 import org.apache.ftpserver.usermanager.PasswordEncryptor;
-import org.apache.ftpserver.usermanager.impl.AbstractUserManager;
+import org.apache.ftpserver.usermanager.UsernamePasswordAuthentication;
+import org.apache.ftpserver.usermanager.impl.*;
+import org.apache.mina.proxy.utils.StringUtilities;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,10 +27,30 @@ public class AuthUserManager extends AbstractUserManager {
     @Override
     public User getUserByName(String ftpUserId) throws FtpException {
         UserDomain findUser = userPersistence.findByFtpId(ftpUserId).orElse(null);
-        if(findUser == null){
+        if (findUser == null) {
             log.info("not have user");
         }
-        return null;
+//        AuthUser authUser = new AuthUser(findUser);
+//        log.info("jpa style auth User ::: {}", authUser);
+        // TODO Example base User
+        BaseUser defaultUser = new BaseUser();
+        defaultUser.setName(findUser.getFtpId());
+        defaultUser.setPassword(findUser.getPassword());
+        defaultUser.setHomeDirectory(findUser.getHomePath());
+        defaultUser.setEnabled(findUser.isUsed());
+        // TODO Check what is ???
+        defaultUser.setMaxIdleTime(0);
+        List<Authority> authorities = new ArrayList<>();
+        // TODO Permission set
+        // writePermission setting
+        authorities.add(new WritePermission());
+        // need to this check point
+        authorities.add(new ConcurrentLoginPermission(0, 0));
+        authorities.add(new TransferRatePermission(0, 0));
+
+        // user role setting
+        defaultUser.setAuthorities(authorities);
+        return defaultUser;
     }
 
     @Override
@@ -46,7 +71,8 @@ public class AuthUserManager extends AbstractUserManager {
     @Override
     public void save(User user) throws FtpException {
         // TODO Setting user save not support
-        AuthUser newUser = (AuthUser) user;
+        User newUser = user;
+        log.info("get save user information ::: {}", user.toString());
         // get user domain
         String password = newUser.getPassword();
         log.info("get password ::: {}", password);
@@ -67,6 +93,50 @@ public class AuthUserManager extends AbstractUserManager {
 
     @Override
     public User authenticate(Authentication authentication) throws AuthenticationFailedException {
-        return null;
+        if (authentication instanceof UsernamePasswordAuthentication) {
+            UsernamePasswordAuthentication userAuth = (UsernamePasswordAuthentication) authentication;
+            // authentication get ID and password
+            String userName = userAuth.getUsername();
+            String userPw = userAuth.getPassword();
+            UserDomain findUser = userPersistence.findByFtpId(userName).orElseThrow(() -> new AuthenticationFailedException("Authentication failed."));
+            // userPw is null and empty set blink
+            if (StringUtils.isNullOrEmpty(userPw)) {
+                userPw = "";
+            }
+            if (getPasswordEncryptor().matches(userPw, findUser.getPassword())) {
+                try {
+                    return getUserByName(findUser.getFtpId());
+                } catch (FtpException e) {
+                    throw new AuthenticationFailedException("Authentication failed", e);
+                }
+            }
+        }
+        if (authentication instanceof AnonymousAuthentication) {
+            log.info("user anonymous.");
+            throw new AuthenticationFailedException("Authentication failed.");
+        }
+        // not match ftp user
+        throw new AuthenticationFailedException("Authentication wrong type ");
+    }
+
+    /**
+     * Escape string to be embedded in SQL statement.
+     */
+    private String escapeString(String input) {
+        if (input == null) {
+            return null;
+        }
+
+        StringBuilder valBuf = new StringBuilder(input);
+        for (int i = 0; i < valBuf.length(); i++) {
+            char ch = valBuf.charAt(i);
+            if (ch == '\'' || ch == '\\' || ch == '$' || ch == '^' || ch == '['
+                    || ch == ']' || ch == '{' || ch == '}') {
+
+                valBuf.insert(i, '\\');
+                i++;
+            }
+        }
+        return valBuf.toString();
     }
 }

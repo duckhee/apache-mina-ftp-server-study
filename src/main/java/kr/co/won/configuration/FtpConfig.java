@@ -1,5 +1,7 @@
 package kr.co.won.configuration;
 
+import kr.co.won.auth.AuthUserManager;
+import kr.co.won.auth.AuthUserManagerFactory;
 import kr.co.won.file.persistence.FtpFilePersistence;
 import kr.co.won.handler.FtpLetCustom;
 import kr.co.won.user.persistence.UserPersistence;
@@ -84,6 +86,9 @@ public class FtpConfig {
         return passwordEncryptor;
     }
 
+    /**
+     * TODO Example Database User Manager Factory
+     */
     @Bean
     public UserManagerFactory userManagerFactory() {
         DbUserManagerFactory managerFactory = new DbUserManagerFactory();
@@ -126,6 +131,9 @@ public class FtpConfig {
         return managerFactory;
     }
 
+    /**
+     * TODO Example User Manager
+     */
     @Bean
     public UserManager userManager() {
         UserManager userManager = userManagerFactory().createUserManager();
@@ -133,6 +141,20 @@ public class FtpConfig {
         return userManager;
     }
 
+    /**
+     * USE Spring Data JPA
+     */
+    @Bean
+    public AuthUserManagerFactory authUserManagerFactory() {
+        AuthUserManagerFactory authUserManagerFactory = new AuthUserManagerFactory(userPersistence, passwordEncryptor());
+        return authUserManagerFactory;
+    }
+
+    @Bean
+    public UserManager authUserManager() {
+        UserManager userManager = authUserManagerFactory().createUserManager();
+        return userManager;
+    }
 
     @Bean
     public FtpServerFactory ftpServerFactory() throws FtpException {
@@ -142,8 +164,10 @@ public class FtpConfig {
         // listener setting
         ftpServerFactory.addListener("defaultListener", listener);
 
+        // sql user manager
+//        UserManager userManager = userManager();
+        UserManager userManager = authUserManager();
         // user manager setting
-        UserManager userManager = userManager();
         ftpServerFactory.setUserManager(userManager);
 
         // make file event map

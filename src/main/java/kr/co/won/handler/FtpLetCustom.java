@@ -50,6 +50,10 @@ public class FtpLetCustom extends DefaultFtplet {
         return superFtpletResult;
     }
 
+    /**
+     * file upload done call this event
+     * Save make file domain and save database
+     */
     @Override
     public FtpletResult onUploadEnd(FtpSession session, FtpRequest request) throws FtpException, IOException {
         log.info("get upload end session ::: {}", session);
@@ -71,12 +75,21 @@ public class FtpLetCustom extends DefaultFtplet {
         return super.onDownloadEnd(session, request);
     }
 
+
+    /**
+     * remove ftp command
+     */
     @Override
     public FtpletResult onRmdirStart(FtpSession session, FtpRequest request) throws FtpException, IOException {
         log.info("get rmdir start session ::: {}, request ::: {}", session, request);
         return super.onRmdirStart(session, request);
     }
 
+    /**
+     * TODO support or not
+     * remove folder
+     * find database data and delete database row
+     */
     @Override
     public FtpletResult onRmdirEnd(FtpSession session, FtpRequest request) throws FtpException, IOException {
         log.info("get rmdir end session ::: {}, request ::: {}", session, request);
