@@ -35,7 +35,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class FtpConfig {
 
+
     private final DataSource dataSource;
+    private final AppProperties appProperties;
     private final String ROOT_PATH = "/Users/duckheewon/Desktop/temp";
     private final UserPersistence userPersistence;
     private final FtpFilePersistence ftpFilePersistence;
@@ -156,12 +158,19 @@ public class FtpConfig {
         List<Authority> authorities = new ArrayList<>();
         authorities.add(new WritePermission());
         // make user dir
-        File homeDir = new File(ROOT_PATH + "/admin");
+        File homeDir = new File(appProperties.getRootPath() + "/admin");
+        // home dir check
+        if (!homeDir.exists()) {
+            // make home dir
+            homeDir.mkdir();
+            log.info("create home dir ::: {}, exists ::: {}", homeDir, homeDir.exists());
+        }
+
         // User make
         BaseUser adminUser = new BaseUser();
         adminUser.setName("admin");
         adminUser.setPassword("admin");
-        adminUser.setHomeDirectory(ROOT_PATH);
+        adminUser.setHomeDirectory(appProperties.getRootPath());
 //        adminUser.setHomeDirectory(homeDir.getName());
         adminUser.setEnabled(true);
         adminUser.setAuthorities(authorities);
