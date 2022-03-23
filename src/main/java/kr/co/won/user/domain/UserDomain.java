@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tbl_ftp_user")
+@Table(name = "tbl_ftp_user_domain")
 public class UserDomain {
 
     @Id
