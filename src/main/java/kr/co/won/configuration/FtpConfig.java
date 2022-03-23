@@ -74,6 +74,7 @@ public class FtpConfig {
         managerFactory.setAdminName("admin");
         managerFactory.setDataSource(dataSource);
 
+        // password encoder setting
         managerFactory.setPasswordEncryptor(passwordEncryptor());
         // insert user query
         managerFactory.setSqlUserInsert("INSERT INTO tbl_ftp_user (userid, userpassword,\n" +
