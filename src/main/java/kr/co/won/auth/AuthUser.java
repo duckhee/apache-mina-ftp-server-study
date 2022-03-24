@@ -27,6 +27,16 @@ public class AuthUser implements User {
 
     }
 
+    public AuthUser(UserDomain user, List<Authority> authorities) {
+        this.user = user;
+        if (authorities != null) {
+            this.authorities = Collections.unmodifiableList(authorities);
+        } else {
+            this.authorities = null;
+        }
+
+    }
+
     @Override
     public String getName() {
         return user.getFtpId();
@@ -36,6 +46,16 @@ public class AuthUser implements User {
     public String getPassword() {
         return user.getPassword();
     }
+
+
+    public void setAuthorities(List<Authority> authorities) {
+        if (authorities != null) {
+            this.authorities = Collections.unmodifiableList(authorities);
+        } else {
+            this.authorities = null;
+        }
+    }
+
 
     @Override
     public List<? extends Authority> getAuthorities() {

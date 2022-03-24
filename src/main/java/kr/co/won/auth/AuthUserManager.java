@@ -30,8 +30,8 @@ public class AuthUserManager extends AbstractUserManager {
         if (findUser == null) {
             log.info("not have user");
         }
-//        AuthUser authUser = new AuthUser(findUser);
-//        log.info("jpa style auth User ::: {}", authUser);
+        AuthUser authUser = new AuthUser(findUser);
+        log.info("jpa style auth User ::: {}", authUser);
         // TODO Example base User
         BaseUser defaultUser = new BaseUser();
         defaultUser.setName(findUser.getFtpId());
@@ -50,7 +50,9 @@ public class AuthUserManager extends AbstractUserManager {
 
         // user role setting
         defaultUser.setAuthorities(authorities);
-        return defaultUser;
+        // custom user set auth
+        authUser.setAuthorities(authorities);
+        return authUser;
     }
 
     @Override
@@ -91,8 +93,10 @@ public class AuthUserManager extends AbstractUserManager {
         return userPersistence.existsByFtpId(s);
     }
 
+    /** Login user check auth */
     @Override
     public User authenticate(Authentication authentication) throws AuthenticationFailedException {
+        log.info("get auth ::: {}", authentication);
         if (authentication instanceof UsernamePasswordAuthentication) {
             UsernamePasswordAuthentication userAuth = (UsernamePasswordAuthentication) authentication;
             // authentication get ID and password
