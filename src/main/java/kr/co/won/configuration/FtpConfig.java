@@ -1,9 +1,12 @@
 package kr.co.won.configuration;
 
+import kr.co.won.auth.AuthUser;
 import kr.co.won.auth.AuthUserManager;
 import kr.co.won.auth.AuthUserManagerFactory;
 import kr.co.won.file.persistence.FtpFilePersistence;
 import kr.co.won.handler.FtpLetCustom;
+import kr.co.won.user.domain.AuthTypeEnum;
+import kr.co.won.user.domain.UserDomain;
 import kr.co.won.user.persistence.UserPersistence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +42,6 @@ public class FtpConfig {
 
     private final DataSource dataSource;
     private final FtpProperties appProperties;
-    private final String ROOT_PATH = "/Users/duckheewon/Desktop/temp";
     private final UserPersistence userPersistence;
     private final FtpFilePersistence ftpFilePersistence;
 
@@ -161,7 +163,7 @@ public class FtpConfig {
         FtpServerFactory ftpServerFactory = new FtpServerFactory();
         Listener listener = listenerFactory().createListener();
         log.info("get listener ::: {}, get port ::: {}", listener.toString(), listener.getPort());
-        // listener setting overriding defualtListener
+        // listener setting overriding default Listener
         HashMap<String, Listener> stringListenerHashMap = new HashMap<>();
         stringListenerHashMap.put("defaultListener", listener);
         ftpServerFactory.setListeners(stringListenerHashMap);
@@ -200,7 +202,27 @@ public class FtpConfig {
         adminUser.setEnabled(true);
         adminUser.setAuthorities(authorities);
         userManager.save(adminUser);
+        // make user domain
+        UserDomain tester = UserDomain.builder()
+                .ftpId("tester")
+                .password("1234")
+                .homePath(appProperties.getRootPath() + "/tester")
+                .used(true)
+                .role(AuthTypeEnum.USER)
+                .build();
+        // make home path
+        File testerDir = new File(appProperties.getRootPath() + "/tester");
 
+        if (!testerDir.exists()) {
+            // make home dir
+            homeDir.mkdir();
+            log.info("create home dir ::: {}, exists ::: {}", homeDir, homeDir.exists());
+        }
+        // user domain save
+        AuthUser authUser = new AuthUser();
+        authUser.setUser(tester);
+        authUser.setAuthorities(authorities);
+        userManager.save(authUser);
         return ftpServerFactory;
     }
 

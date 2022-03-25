@@ -33,4 +33,4 @@ build/
 .vscode/
 
 ### ftp test temp dir ###
-temp/
+/temp/

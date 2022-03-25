@@ -18,6 +18,9 @@ public class AuthUser implements User {
     private UserDomain user;
     private List<? extends Authority> authorities = new ArrayList();
 
+    public AuthUser() {
+
+    }
 
     public AuthUser(UserDomain user) {
         this.user = user;
@@ -26,6 +29,11 @@ public class AuthUser implements User {
         this.authorities = Collections.unmodifiableList(auths);
 
     }
+
+    public void setUser(UserDomain user) {
+        this.user = user;
+    }
+
 
     public AuthUser(UserDomain user, List<Authority> authorities) {
         this.user = user;
