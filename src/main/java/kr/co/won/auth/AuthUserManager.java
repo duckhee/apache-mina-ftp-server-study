@@ -18,7 +18,11 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
-public class AuthUserManager extends AbstractUserManager {
+public class AuthUserManager implements UserManager {
+
+    ///////////////////////
+
+    ///////////////////////
 
     private final UserPersistence userPersistence;
     private final PasswordEncryptor passwordEncryptor;
@@ -93,6 +97,8 @@ public class AuthUserManager extends AbstractUserManager {
         return userPersistence.existsByFtpId(s);
     }
 
+
+
     /** Login user check auth */
     @Override
     public User authenticate(Authentication authentication) throws AuthenticationFailedException {
@@ -107,7 +113,7 @@ public class AuthUserManager extends AbstractUserManager {
             if (StringUtils.isNullOrEmpty(userPw)) {
                 userPw = "";
             }
-            if (getPasswordEncryptor().matches(userPw, findUser.getPassword())) {
+            if (passwordEncryptor.matches(userPw, findUser.getPassword())) {
                 try {
                     return getUserByName(findUser.getFtpId());
                 } catch (FtpException e) {
@@ -121,6 +127,16 @@ public class AuthUserManager extends AbstractUserManager {
         }
         // not match ftp user
         throw new AuthenticationFailedException("Authentication wrong type ");
+    }
+
+    @Override
+    public String getAdminName() throws FtpException {
+        return null;
+    }
+
+    @Override
+    public boolean isAdmin(String username) throws FtpException {
+        return false;
     }
 
     /**

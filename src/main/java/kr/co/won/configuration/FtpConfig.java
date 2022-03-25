@@ -161,8 +161,10 @@ public class FtpConfig {
         FtpServerFactory ftpServerFactory = new FtpServerFactory();
         Listener listener = listenerFactory().createListener();
         log.info("get listener ::: {}, get port ::: {}", listener.toString(), listener.getPort());
-        // listener setting
-        ftpServerFactory.addListener("defaultListener", listener);
+        // listener setting overriding defualtListener
+        HashMap<String, Listener> stringListenerHashMap = new HashMap<>();
+        stringListenerHashMap.put("defaultListener", listener);
+        ftpServerFactory.setListeners(stringListenerHashMap);
 
         // sql user manager
 //        UserManager userManager = userManager();
@@ -193,8 +195,8 @@ public class FtpConfig {
         BaseUser adminUser = new BaseUser();
         adminUser.setName("admin");
         adminUser.setPassword("admin");
+//        adminUser.setHomeDirectory(homeDir.getPath());
         adminUser.setHomeDirectory(appProperties.getRootPath());
-//        adminUser.setHomeDirectory(homeDir.getName());
         adminUser.setEnabled(true);
         adminUser.setAuthorities(authorities);
         userManager.save(adminUser);
