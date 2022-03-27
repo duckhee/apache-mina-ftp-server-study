@@ -5,7 +5,7 @@ import kr.co.won.auth.ftp.AuthUserManagerFactory;
 import kr.co.won.file.persistence.FtpFilePersistence;
 import kr.co.won.handler.FtpLetCustom;
 import kr.co.won.user.domain.AuthTypeEnum;
-import kr.co.won.user.domain.UserDomain;
+import kr.co.won.user.domain.ftp.UserDomain;
 import kr.co.won.user.persistence.UserPersistence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

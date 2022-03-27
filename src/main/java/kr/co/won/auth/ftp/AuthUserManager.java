@@ -1,7 +1,7 @@
 package kr.co.won.auth.ftp;
 
 import com.querydsl.core.util.StringUtils;
-import kr.co.won.user.domain.UserDomain;
+import kr.co.won.user.domain.ftp.UserDomain;
 import kr.co.won.user.persistence.UserPersistence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

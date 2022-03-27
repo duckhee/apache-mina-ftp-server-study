@@ -1,5 +1,6 @@
-package kr.co.won.user.domain;
+package kr.co.won.user.domain.ftp;
 
+import kr.co.won.user.domain.AuthTypeEnum;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;

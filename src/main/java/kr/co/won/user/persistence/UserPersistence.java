@@ -1,6 +1,6 @@
 package kr.co.won.user.persistence;
 
-import kr.co.won.user.domain.UserDomain;
+import kr.co.won.user.domain.ftp.UserDomain;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
