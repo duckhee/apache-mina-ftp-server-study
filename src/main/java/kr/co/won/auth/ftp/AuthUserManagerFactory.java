@@ -1,9 +1,8 @@
-package kr.co.won.auth;
+package kr.co.won.auth.ftp;
 
 import kr.co.won.user.persistence.UserPersistence;
 import lombok.RequiredArgsConstructor;
 import org.apache.ftpserver.ftplet.UserManager;
-import org.apache.ftpserver.usermanager.DbUserManagerFactory;
 import org.apache.ftpserver.usermanager.PasswordEncryptor;
 import org.apache.ftpserver.usermanager.UserManagerFactory;
 

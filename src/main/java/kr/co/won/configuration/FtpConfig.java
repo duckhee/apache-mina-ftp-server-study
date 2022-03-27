@@ -1,8 +1,7 @@
 package kr.co.won.configuration;
 
-import kr.co.won.auth.AuthUser;
-import kr.co.won.auth.AuthUserManager;
-import kr.co.won.auth.AuthUserManagerFactory;
+import kr.co.won.auth.ftp.AuthUser;
+import kr.co.won.auth.ftp.AuthUserManagerFactory;
 import kr.co.won.file.persistence.FtpFilePersistence;
 import kr.co.won.handler.FtpLetCustom;
 import kr.co.won.user.domain.AuthTypeEnum;

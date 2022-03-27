@@ -1,4 +1,4 @@
-package kr.co.won.auth;
+package kr.co.won.auth.ftp;
 
 import com.querydsl.core.util.StringUtils;
 import kr.co.won.user.domain.UserDomain;
@@ -10,11 +10,9 @@ import org.apache.ftpserver.usermanager.AnonymousAuthentication;
 import org.apache.ftpserver.usermanager.PasswordEncryptor;
 import org.apache.ftpserver.usermanager.UsernamePasswordAuthentication;
 import org.apache.ftpserver.usermanager.impl.*;
-import org.apache.mina.proxy.utils.StringUtilities;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor

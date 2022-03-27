@@ -1,4 +1,4 @@
-package kr.co.won.auth;
+package kr.co.won.auth.ftp;
 
 import kr.co.won.user.domain.UserDomain;
 import org.apache.ftpserver.ftplet.Authority;
